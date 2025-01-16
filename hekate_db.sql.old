@@ -1,0 +1,109 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+CREATE DATABASE IF NOT EXISTS `hekate_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `hekate_db`;
+
+DROP TABLE IF EXISTS `categoria`;
+CREATE TABLE IF NOT EXISTS `categoria` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  `descricao` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nome` (`nome`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `categoria` (`id`, `nome`, `descricao`) VALUES
+(1, 'Itens Magicos', 'Artigos necessários para o culto à Deusa');
+
+DROP TABLE IF EXISTS `cliente`;
+CREATE TABLE IF NOT EXISTS `cliente` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) DEFAULT NULL,
+  `cpf` varchar(50) DEFAULT NULL,
+  `rg` varchar(50) DEFAULT NULL,
+  `telefone` varchar(15) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `cep` varchar(50) DEFAULT NULL,
+  `endereco` varchar(100) DEFAULT NULL,
+  `numero` varchar(50) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(50) DEFAULT NULL,
+  `pais` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `cliente` (`id`, `nome`, `cpf`, `rg`, `telefone`, `email`, `cep`, `endereco`, `numero`, `bairro`, `cidade`, `estado`, `pais`) VALUES
+(1, 'lucas', NULL, NULL, '45998044494', NULL, NULL, 'rua marechal', NULL, NULL, NULL, NULL, NULL);
+
+DROP TABLE IF EXISTS `produto`;
+CREATE TABLE IF NOT EXISTS `produto` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nome` varchar(75) NOT NULL,
+  `descricao` varchar(200) DEFAULT NULL,
+  `preco` decimal(10,2) NOT NULL,
+  `quantidade` int NOT NULL,
+  `categoria_id` int NOT NULL,
+  `usuario_id` bigint NOT NULL,
+  `data_hora_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nome` (`nome`),
+  KEY `fk_produto_categoria` (`categoria_id`),
+  KEY `fk_produto_usuario` (`usuario_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `usuario`;
+CREATE TABLE IF NOT EXISTS `usuario` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nome` varchar(75) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `senha` varchar(100) NOT NULL,
+  `perfil` varchar(10) NOT NULL DEFAULT 'PADRAO',
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `data_hora_criacao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ultimo_login` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `usuario` (`id`, `nome`, `username`, `senha`, `perfil`, `status`, `data_hora_criacao`, `ultimo_login`) VALUES
+(1, 'Administrador', 'admin', '123', 'ADMIN', 1, '2023-10-17 21:50:06', '2023-11-14 19:09:48');
+
+DROP TABLE IF EXISTS `venda`;
+CREATE TABLE IF NOT EXISTS `venda` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `total_venda` decimal(10,2) NOT NULL,
+  `valor_pago` decimal(10,2) NOT NULL,
+  `troco` decimal(10,2) NOT NULL,
+  `desconto` decimal(10,2) NOT NULL,
+  `cliente_id` int DEFAULT NULL,
+  `usuario_id` bigint NOT NULL,
+  `data_hora_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
+  `ultima_actualizacao` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_venda_cliente` (`cliente_id`),
+  KEY `fk_venda_usuario` (`usuario_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `venda_item`;
+CREATE TABLE IF NOT EXISTS `venda_item` (
+  `venda_id` int NOT NULL,
+  `produto_id` bigint NOT NULL,
+  `quantidade` int NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `desconto` decimal(10,2) NOT NULL,
+  KEY `fk_venda_item_venda` (`venda_id`),
+  KEY `fk_venda_item_produto` (`produto_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
